@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Henry Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        #downloadLink {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Instagram Video Downloader</h2>
+    <input type="text" id="videoUrl" placeholder="Paste Instagram Video URL">
+    <button onclick="fetchVideo()">Get Video</button>
+    
+    <p id="status"></p>
+    <a id="downloadLink" href="#" download>Download Video</a>
+
+    <script>
+        function fetchVideo() {
+            let url = document.getElementById("videoUrl").value;
+            let status = document.getElementById("status");
+            let downloadLink = document.getElementById("downloadLink");
+
+            if (!url) {
+                status.innerText = "❌ Please enter a valid Instagram URL.";
+                return;
+            }
+
+            status.innerText = "⏳ Fetching video...";
+
+            // Use your hosted API URL from Render
+            fetch("https://masterdownload.onrender.com/download", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.video_url) {
+                    status.innerText = "✅ Video Found!";
+                    downloadLink.href = data.video_url;
+                    downloadLink.style.display = "block";
+                    downloadLink.innerText = "📥 Download Video";
+                } else {
+                    status.innerText = "❌ Failed to get video.";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                status.innerText = "❌ Error fetching video.";
+            });
+        }
+    </script>
+</body>
+</html>
